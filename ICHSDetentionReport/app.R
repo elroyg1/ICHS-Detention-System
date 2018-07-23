@@ -3,10 +3,6 @@ library(googlesheets)
 library(dplyr)
 library(DT)
 
-# Link to googlesheet
-
-
-
 # Define UI for application
 ui <- navbarPage(
    
@@ -52,7 +48,6 @@ ui <- navbarPage(
 # Define server logic
 server <- function(input, output) {
    
-
    output$table <- renderDataTable({
      
      input$refresh
