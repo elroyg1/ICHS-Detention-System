@@ -23,6 +23,22 @@ ui <- navbarPage(
      )
    ),
    
+   # Tab for served
+   tabPanel(
+     "Detention Served",
+     wellPanel(
+       htmlOutput(
+         "googleForm2",
+         container = tags$iframe,
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
+         width = 700,
+         height = 520,
+         frameborder= 0,
+         marginheight = 0
+       )
+     )
+   ),
+   
    # Tab for output
    tabPanel(
      "Report",
@@ -35,6 +51,11 @@ ui <- navbarPage(
          textInput(
            "fname",
            "First Name"
+         ),
+         
+         textInput(
+           "grade",
+           "Grade"
          )
        ),
        mainPanel(
@@ -52,13 +73,10 @@ server <- function(input, output) {
      
      input$refresh
 
-     gs_key("1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk",
-            lookup = F,
-            visibility = "public")%>%
-       gs_read()%>%
+     report_table %>%
        filter(`First Name` == input$fname,
-              `Last Name` == input$lname) %>%
-       select(`Date given`:`Date served`) %>%
+              `Last Name` == input$lname,
+              `Grade` == input$grade) %>%
        datatable(
          extensions = "Buttons",
          options = list(
@@ -68,7 +86,7 @@ server <- function(input, output) {
        )
    }
      
-   )
+  )
 }
 
 # Run the application 
