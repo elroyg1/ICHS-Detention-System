@@ -1,8 +1,8 @@
 library(googlesheets)
 
-# shiny_token <- gs_auth()
+shiny_token <- gs_auth()
 
-# saveRDS(shiny_token,"shiny_app_token.rds")
+saveRDS(shiny_token,"shiny_app_token.rds")
 
 gs_auth(token = "shiny_app_token.rds")
 

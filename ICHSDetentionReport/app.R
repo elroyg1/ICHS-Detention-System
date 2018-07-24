@@ -11,71 +11,46 @@ ui <- navbarPage(
    
    # Tab for issuance
    tabPanel(
-     "Detention Issuance",
-     wellPanel(
-       htmlOutput("googleForm1",
-                  container = tags$iframe,
-                  src = "https://docs.google.com/forms/d/e/1FAIpQLSfYQnGM67fs34TTBeU5XEOuxfZx0_iQ9cEWaIyrmiHTXexppA/viewform?embedded=true",
-                  width = 700,
-                  height = 520,
-                  frameborder = 0,
-                  marginheight = 0)
+     "Detentions Issued",
+     sidebarLayout(
+       
+       sidebarPanel(
+         htmlOutput(
+           "issued",
+           container = tags$iframe,
+           src = "https://docs.google.com/forms/d/e/1FAIpQLSfYQnGM67fs34TTBeU5XEOuxfZx0_iQ9cEWaIyrmiHTXexppA/viewform?embedded=true",
+           width = 400,
+           height = 625,
+           frameborder = 0,
+           marginheight = 0)
+         ),
+     
+       mainPanel(
+         DT::dataTableOutput("issued")
+       )
      )
    ),
-   
 
    # Tab for Detention served
    tabPanel(
-     "Detention Served",
-     htmlOutput(
-       "googleForm2",
-       container = tags$iframe,
-       src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
-       width = 700,
-       height = 520,
-       frameborder = 0,
-       marginheight = 0
-     )
-   ),
-
-   # Tab for served
-   tabPanel(
-     "Detention Served",
-     wellPanel(
-       htmlOutput(
-         "googleForm2",
+     "Detentions Served",
+     
+     sidebarLayout(
+       
+       sidebarPanel(
+         htmlOutput(
+         "served",
          container = tags$iframe,
          src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
-         width = 700,
-         height = 520,
-         frameborder= 0,
+         width = 400,
+         height = 625,
+         frameborder = 0,
          marginheight = 0
        )
-     )
-   ),
-   
-   # Tab for output
-   tabPanel(
-     "Report",
-     sidebarLayout(
-       sidebarPanel(
-         textInput(
-           "lname",
-           "Last Name"
-         ),
-         textInput(
-           "fname",
-           "First Name"
-         ),
-         textInput(
-           "grade",
-           "Grade"
-         )
        ),
        mainPanel(
-         dataTableOutput("table"),
-         actionButton("refresh", "Refresh Sheet")
-       )
+         DT::dataTableOutput("served")
+         )
      )
    )
 )
@@ -83,15 +58,10 @@ ui <- navbarPage(
 # Define server logic
 server <- function(input, output) {
    
-   output$table <- renderDataTable({
-     
-     input$refresh
+   output$served <- DT::renderDataTable({
 
      report_table %>%
-       filter(`First Name` == input$fname,
-              `Last Name` == input$lname,
-              `Grade` == input$grade) %>%
-       datatable(
+       DT::datatable(
          extensions = "Buttons",
          options = list(
            dom = "Bfrtip",
@@ -99,6 +69,19 @@ server <- function(input, output) {
          )
        )
 
+   })
+   
+   output$issued <- DT::renderDataTable({
+
+     detentionissued %>%
+       select(-Timestamp) %>%
+       DT::datatable(
+         extensions = "Buttons",
+         options = list(
+           dom = "Bfrtip",
+           buttons = c("excel","pdf","print")
+         )
+       )
    })
 
    }
