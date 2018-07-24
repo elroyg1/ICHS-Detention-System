@@ -23,6 +23,7 @@ ui <- navbarPage(
      )
    ),
    
+
    # Tab for Detention served
    tabPanel(
      "Detention Served",
@@ -34,6 +35,22 @@ ui <- navbarPage(
        height = 520,
        frameborder = 0,
        marginheight = 0
+     )
+   ),
+
+   # Tab for served
+   tabPanel(
+     "Detention Served",
+     wellPanel(
+       htmlOutput(
+         "googleForm2",
+         container = tags$iframe,
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
+         width = 700,
+         height = 520,
+         frameborder= 0,
+         marginheight = 0
+       )
      )
    ),
    
@@ -81,9 +98,10 @@ server <- function(input, output) {
            buttons = c("excel", "pdf","print")
          )
        )
+
    })
-   
-}
+
+   }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
