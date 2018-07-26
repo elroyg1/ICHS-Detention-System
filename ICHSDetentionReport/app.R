@@ -1,4 +1,5 @@
 library(shiny)
+library(shinythemes)
 library(googlesheets)
 library(dplyr)
 library(DT)
@@ -20,9 +21,11 @@ report_table <- detentionissued %>%
 
 # Define UI for application
 ui <- navbarPage(
+  
+  theme = shinytheme("cerulean"),
    
    # Application title
-   title = "ICHS Detention",
+   title = "ICHS Detention System",
    
    # Tab for issuance
    tabPanel(
