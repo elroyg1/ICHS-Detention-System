@@ -74,8 +74,6 @@ ui <- navbarPage(
 # Define server logic
 server <- function(input, output) {
   
-  renderText(input$date)
-  
   observeEvent(input$display,{
     
     ws <- reactive({
