@@ -1,16 +1,35 @@
 library(shiny)
+library(shinyjs)
 library(shinythemes)
 library(googlesheets)
 library(dplyr)
+library(stringr)
 library(DT)
 
 # Define UI for application
 ui <- navbarPage(
+ 
+  
   # Theme
   theme = shinytheme("cerulean"),
    
    # Application title
    title = "ICHS Detention System",
+  
+  # navbarPage ID
+  id = "tabs",
+  
+  # Tab for login
+  tabPanel(
+    "Login",
+    
+    wellPanel(
+      useShinyjs(),
+      textInput("email", "Email"),
+      textInput("password", "Password"),
+      actionButton("submit","Submit")
+    )
+  ),
    
    # Tab for issuance
    tabPanel(
@@ -74,6 +93,41 @@ ui <- navbarPage(
 # Define server logic
 server <- function(input, output) {
   
+  hideTab(inputId = "tabs",
+          target = "Report"
+          )
+  hideTab(inputId = "tabs",
+          target = "Detentions Issued"
+  )
+  hideTab(inputId = "tabs",
+          target = "Detentions Served"
+  )
+  
+  # Login
+  observeEvent(input$submit,{
+  
+    "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
+      gs_key() %>%
+      gs_add_row(ws="Log",
+                 input = c(paste(Sys.time()),
+                           input$email,
+                           input$password)
+      )
+    
+    if(str_detect(input$email, "^[[:graph:]]+@immaculatehigh.edu.jm$") & 
+       input$password == "Password"){
+      showTab(inputId = "tabs",
+              "Report")
+      showTab(inputId = "tabs",
+              "Detentions Issued")
+      showTab(inputId = "tabs",
+              "Detentions Served")
+      hideTab(inputId = "tabs",
+              target = "Login")
+    }
+  })
+  
+  # Display report
   observeEvent(input$display,{
     
     ws <- reactive({
