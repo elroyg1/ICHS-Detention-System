@@ -27,7 +27,8 @@ ui <- navbarPage(
       useShinyjs(),
       textInput("email", "Email"),
       textInput("password", "Password"),
-      actionButton("submit","Submit")
+      actionButton("submit","Submit"),
+      textOutput("error")
     )
   ),
    
@@ -124,6 +125,8 @@ server <- function(input, output) {
               "Detentions Served")
       hideTab(inputId = "tabs",
               target = "Login")
+    } else {
+      output$error <- renderText({"Email/Password incorrect. Please try again."})
     }
   })
   
