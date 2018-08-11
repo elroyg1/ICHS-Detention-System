@@ -26,7 +26,7 @@ ui <- navbarPage(
     wellPanel(
       useShinyjs(),
       textInput("email", "Email"),
-      textInput("password", "Password"),
+      passwordInput("password", "Password"),
       actionButton("submit","Submit"),
       textOutput("error")
     )
