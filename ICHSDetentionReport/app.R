@@ -31,6 +31,20 @@ ui <- navbarPage(
       textOutput("error")
     )
   ),
+  
+  #Profile Panel
+  tabPanel(
+    "Profile",
+    
+    wellPanel(
+      textOutput("username"),
+      textOutput("login_email"),
+      passwordInput("current_password","Current Password"),
+      passwordInput("new_password","New Password"),
+      actionButton("update", "Update"),
+      textOutput("update_error")
+    )
+  ),
    
    # Tab for issuance
    tabPanel(
@@ -103,10 +117,20 @@ server <- function(input, output) {
   hideTab(inputId = "tabs",
           target = "Detentions Served"
   )
+  hideTab(inputId = "tabs",
+          target = "Profile")
+  
+  observeEvent(input$submit,{
+    login <- reactive({
+      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
+        gs_key() %>%
+        gs_read(ws = "Credentials")
+    })
+  })
   
   # Login
   observeEvent(input$submit,{
-  
+
     "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
       gs_key() %>%
       gs_add_row(ws="Log",
@@ -115,8 +139,9 @@ server <- function(input, output) {
                            input$password)
       )
     
-    if(str_detect(input$email, "^[[:graph:]]+@immaculatehigh.edu.jm$") & 
-       input$password == "Password"){
+    if(input$password == last(login$Password[input$email==login$Email])){
+      showTab(inputId = "tabs",
+              "Profile")
       showTab(inputId = "tabs",
               "Report")
       showTab(inputId = "tabs",
@@ -129,6 +154,32 @@ server <- function(input, output) {
       output$error <- renderText({"Email/Password incorrect. Please try again."})
     }
   })
+  
+  #Update Profile
+
+    output$username <- renderText({
+      last(login$Name[input$email==login$Email])
+    })
+    
+    output$login_email <- renderText({
+      input$email
+    })
+  observeEvent(input$update,{
+    if(input$current_password == last(login$Password[input$email==login$Email])){
+      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
+        gs_key() %>%
+        gs_add_row(
+          ws="Credentials",
+          input = c(last(login$Name[input$email==login$Email]),
+                    input$email,
+                    input$new_password)
+        )
+      reset("new_password")
+      reset("current_password")
+    }else{
+      output$update_error <- renderText({"Current password incorrect. Please try again."})
+    }
+  })  
   
   # Display report
   observeEvent(input$display,{
