@@ -6,6 +6,11 @@ library(dplyr)
 library(stringr)
 library(DT)
 
+# Credentials
+login <-"1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
+  gs_key() %>%
+  gs_read(ws = "Credentials")
+
 # Define UI for application
 ui <- navbarPage(
  
@@ -119,14 +124,6 @@ server <- function(input, output) {
   )
   hideTab(inputId = "tabs",
           target = "Profile")
-  
-  observeEvent(input$submit,{
-    login <- reactive({
-      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-        gs_key() %>%
-        gs_read(ws = "Credentials")
-    })
-  })
   
   # Login
   observeEvent(input$submit,{
