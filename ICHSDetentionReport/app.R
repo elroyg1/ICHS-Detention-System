@@ -30,6 +30,8 @@ ui <- navbarPage(
     
     wellPanel(
       useShinyjs(),
+      extendShinyjs(text = "shinyjs.closeWindow = function() { window.close(); }",
+                    functions = c("closeWindow")),
       textInput("email", "Email"),
       passwordInput("password", "Password"),
       actionButton("submit","Submit"),
@@ -43,7 +45,6 @@ ui <- navbarPage(
     
     wellPanel(
       textOutput("username"),
-      textOutput("login_email"),
       passwordInput("current_password","Current Password"),
       passwordInput("new_password","New Password"),
       actionButton("update", "Update"),
@@ -107,11 +108,20 @@ ui <- navbarPage(
                actionButton("refresh", "Refresh"))
     )
   )
+),
+
+# Logout Tab
+
+tabPanel(
+  "Logout",
+  wellPanel(
+    actionButton("logout","Logout")
+  )
 )
 )
 
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output,session) {
   
   hideTab(inputId = "tabs",
           target = "Report"
@@ -124,6 +134,8 @@ server <- function(input, output) {
   )
   hideTab(inputId = "tabs",
           target = "Profile")
+  hideTab(inputId = "tabs",
+          target = "Logout")
   
   # Login
   observeEvent(input$submit,{
@@ -145,8 +157,21 @@ server <- function(input, output) {
               "Detentions Issued")
       showTab(inputId = "tabs",
               "Detentions Served")
+      showTab(inputId = "tabs",
+              "Logout")
       hideTab(inputId = "tabs",
               target = "Login")
+      if(length(login$Password[input$email==login$Email])==1){
+        updateNavbarPage(session,
+                         "tabs",
+                         selected = "Profile")
+      }else{
+        updateNavbarPage(session,
+                         "tabs",
+                         selected = "Detentions Issued")
+      }
+      reset(input$email)
+      reset(input$password)
     } else {
       output$error <- renderText({"Email/Password incorrect. Please try again."})
     }
@@ -155,12 +180,10 @@ server <- function(input, output) {
   #Update Profile
 
     output$username <- renderText({
-      last(login$Name[input$email==login$Email])
+     paste("Welcome ",last(login$Name[input$email==login$Email]), 
+           ". If this is your first time, please enter your new password using the form below.") 
     })
-    
-    output$login_email <- renderText({
-      input$email
-    })
+   
   observeEvent(input$update,{
     if(input$current_password == last(login$Password[input$email==login$Email])){
       "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
@@ -208,6 +231,12 @@ server <- function(input, output) {
       
     })
     
+  })
+  
+  # Logout
+  observeEvent(input$logout,{
+    js$closeWindow()
+    stopApp()
   })
   
 }
