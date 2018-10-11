@@ -7,8 +7,7 @@ library(stringr)
 library(DT)
 
 # Credentials
-login <-"1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-  gs_key() %>%
+login <-ss %>%
   gs_read(ws = "Credentials")
 
 # Define UI for application
@@ -62,7 +61,7 @@ ui <- navbarPage(
        htmlOutput(
          "issue",
          container = tags$iframe,
-         src = "https://docs.google.com/forms/d/e/1FAIpQLSfYQnGM67fs34TTBeU5XEOuxfZx0_iQ9cEWaIyrmiHTXexppA/viewform?embedded=true",
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSfhQtVah0CshARv_3VzJ4CeCGb8dkh1AT38hNqFZSYp_va-GA/viewform?embedded=true",
          width = 800,
          height = 525,
          frameborder = 0,
@@ -79,7 +78,7 @@ ui <- navbarPage(
        htmlOutput(
          "serve",
          container = tags$iframe,
-         src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSd31k-RnlkuqTb7ErGvD2DPTM-o0hjJps8wBIpqitBcw9QjkQ/viewform?embedded=true",
          width = 800,
          height = 425,
          frameborder = 0,
@@ -140,8 +139,7 @@ server <- function(input, output,session) {
   # Login
   observeEvent(input$submit,{
 
-    "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-      gs_key() %>%
+    ss %>%
       gs_add_row(ws="Log",
                  input = c(paste(Sys.time()),
                            input$email,
@@ -186,8 +184,8 @@ server <- function(input, output,session) {
    
   observeEvent(input$update,{
     if(input$current_password == last(login$Password[input$email==login$Email])){
-      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-        gs_key() %>%
+      
+      ss %>%
         gs_add_row(
           ws="Credentials",
           input = c(last(login$Name[input$email==login$Email]),
@@ -216,8 +214,7 @@ server <- function(input, output,session) {
     
     output$report <- renderDataTable({
       
-      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-        gs_key() %>%
+      ss %>%
         gs_read(ws=ws()) %>% 
         select(-Timestamp) %>%
         datatable(
