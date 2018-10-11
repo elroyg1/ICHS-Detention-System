@@ -205,8 +205,8 @@ server <- function(input, output,session) {
     ws <- reactive({
       ifelse(
         input$choice == 1,
-        2,
-        1
+        "DetentionIssued",
+        "DetentionServed"
       )
     })
 
