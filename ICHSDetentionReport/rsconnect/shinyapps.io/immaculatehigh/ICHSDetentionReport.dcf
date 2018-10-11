@@ -1,0 +1,12 @@
+name: ICHSDetentionReport
+title: ICHSDetentionReport
+username:
+account: immaculatehigh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 407571
+bundleId: 1552231
+url: https://immaculatehigh.shinyapps.io/ICHSDetentionReport/
+when: 1535116802.8028
+asMultiple: FALSE
+asStatic: FALSE

@@ -7,8 +7,7 @@ library(stringr)
 library(DT)
 
 # Credentials
-login <-"1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-  gs_key() %>%
+login <-ss %>%
   gs_read(ws = "Credentials")
 
 # Define UI for application
@@ -30,6 +29,8 @@ ui <- navbarPage(
     
     wellPanel(
       useShinyjs(),
+      extendShinyjs(text = "shinyjs.closeWindow = function() { window.close(); }",
+                    functions = c("closeWindow")),
       textInput("email", "Email"),
       passwordInput("password", "Password"),
       actionButton("submit","Submit"),
@@ -43,7 +44,6 @@ ui <- navbarPage(
     
     wellPanel(
       textOutput("username"),
-      textOutput("login_email"),
       passwordInput("current_password","Current Password"),
       passwordInput("new_password","New Password"),
       actionButton("update", "Update"),
@@ -61,7 +61,7 @@ ui <- navbarPage(
        htmlOutput(
          "issue",
          container = tags$iframe,
-         src = "https://docs.google.com/forms/d/e/1FAIpQLSfYQnGM67fs34TTBeU5XEOuxfZx0_iQ9cEWaIyrmiHTXexppA/viewform?embedded=true",
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSfhQtVah0CshARv_3VzJ4CeCGb8dkh1AT38hNqFZSYp_va-GA/viewform?embedded=true",
          width = 800,
          height = 525,
          frameborder = 0,
@@ -78,7 +78,7 @@ ui <- navbarPage(
        htmlOutput(
          "serve",
          container = tags$iframe,
-         src = "https://docs.google.com/forms/d/e/1FAIpQLSc_L7aNSBdJ4UE7DpsX2NNdIKkOYt9qTg1KiCk4lWzHkiWvWw/viewform?embedded=true",
+         src = "https://docs.google.com/forms/d/e/1FAIpQLSd31k-RnlkuqTb7ErGvD2DPTM-o0hjJps8wBIpqitBcw9QjkQ/viewform?embedded=true",
          width = 800,
          height = 425,
          frameborder = 0,
@@ -107,11 +107,20 @@ ui <- navbarPage(
                actionButton("refresh", "Refresh"))
     )
   )
+),
+
+# Logout Tab
+
+tabPanel(
+  "Logout",
+  wellPanel(
+    actionButton("logout","Logout")
+  )
 )
 )
 
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output,session) {
   
   hideTab(inputId = "tabs",
           target = "Report"
@@ -124,12 +133,13 @@ server <- function(input, output) {
   )
   hideTab(inputId = "tabs",
           target = "Profile")
+  hideTab(inputId = "tabs",
+          target = "Logout")
   
   # Login
   observeEvent(input$submit,{
 
-    "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-      gs_key() %>%
+    ss %>%
       gs_add_row(ws="Log",
                  input = c(paste(Sys.time()),
                            input$email,
@@ -145,8 +155,21 @@ server <- function(input, output) {
               "Detentions Issued")
       showTab(inputId = "tabs",
               "Detentions Served")
+      showTab(inputId = "tabs",
+              "Logout")
       hideTab(inputId = "tabs",
               target = "Login")
+      if(length(login$Password[input$email==login$Email])==1){
+        updateNavbarPage(session,
+                         "tabs",
+                         selected = "Profile")
+      }else{
+        updateNavbarPage(session,
+                         "tabs",
+                         selected = "Detentions Issued")
+      }
+      reset(input$email)
+      reset(input$password)
     } else {
       output$error <- renderText({"Email/Password incorrect. Please try again."})
     }
@@ -155,16 +178,14 @@ server <- function(input, output) {
   #Update Profile
 
     output$username <- renderText({
-      last(login$Name[input$email==login$Email])
+     paste("Welcome ",last(login$Name[input$email==login$Email]), 
+           ". If this is your first time, please enter your new password using the form below.") 
     })
-    
-    output$login_email <- renderText({
-      input$email
-    })
+   
   observeEvent(input$update,{
     if(input$current_password == last(login$Password[input$email==login$Email])){
-      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-        gs_key() %>%
+      
+      ss %>%
         gs_add_row(
           ws="Credentials",
           input = c(last(login$Name[input$email==login$Email]),
@@ -184,8 +205,8 @@ server <- function(input, output) {
     ws <- reactive({
       ifelse(
         input$choice == 1,
-        2,
-        1
+        "DetentionIssued",
+        "DetentionServed"
       )
     })
 
@@ -193,8 +214,7 @@ server <- function(input, output) {
     
     output$report <- renderDataTable({
       
-      "1ltL1QjCUrgK3CBHKhzKHsOHNDce3Zj_1Lykhqtifauk" %>%
-        gs_key() %>%
+      ss %>%
         gs_read(ws=ws()) %>% 
         select(-Timestamp) %>%
         datatable(
@@ -208,6 +228,12 @@ server <- function(input, output) {
       
     })
     
+  })
+  
+  # Logout
+  observeEvent(input$logout,{
+    js$closeWindow()
+    stopApp()
   })
   
 }
