@@ -5,8 +5,9 @@ account: immaculatehigh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 407571
-bundleId: 1552231
+bundleId: 1639964
 url: https://immaculatehigh.shinyapps.io/ICHSDetentionReport/
-when: 1535116802.8028
+when: 1539377868.44988
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: _config.yml|global.R|googlesheet_token.rds

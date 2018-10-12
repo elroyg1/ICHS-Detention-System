@@ -126,7 +126,7 @@ tabPanel(
 # Define server logic
 server <- function(input, output,session) {
   
-  session$allowReconnect(TRUE)
+  session$allowReconnect("force")
   
   hideTab(inputId = "tabs",
           target = "Report"

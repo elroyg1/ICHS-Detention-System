@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1539354574463.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3031919631",
+    "id" : "5BFF1122",
+    "lastKnownWriteTime" : 1539363113,
+    "last_content_update" : 1539363113329,
+    "path" : "C:/Users/Elroy/Desktop/ICHS-Detention-System/ICHSDetentionReport/global.R",
+    "project_path" : "ICHSDetentionReport/global.R",
+    "properties" : {
+        "cursorPosition" : "12,13",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

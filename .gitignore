@@ -1,6 +1,2 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
 .httr-oauth
-.shiny_app_token.rds
+.Rproj.user
